@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sổ gia sư</title>
+<meta name="theme-color" content="#4A3BCB">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sổ gia sư">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F1FA; --card:#FFFFFF; --ink:#1B1938; --muted:#74728F; --line:#E4E2F3;
+  --brand:#5B47E0; --brand-soft:#ECE9FF; --on-brand:#FFFFFF;
+  --ok:#12936A; --ok-soft:#DDF5EC; --warn:#B96D00; --warn-soft:#FFF0D6; --bad:#D6403A; --bad-soft:#FFE4E1;
+  --hero:linear-gradient(150deg,#4A3BCB 0%,#6F4FE8 55%,#9B5DE5 100%);
+  --hero-shadow:0 16px 32px -14px rgba(91,71,224,.6);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E0D1B; --card:#181730; --ink:#EDEBFF; --muted:#9A98BC; --line:#2B2A4A;
+    --brand:#9A8CFF; --brand-soft:#26224D; --on-brand:#14102E;
+    --ok:#4ADBA6; --ok-soft:#10352B; --warn:#FFC25E; --warn-soft:#3B2C10; --bad:#FF8279; --bad-soft:#40201F;
+    --hero:linear-gradient(150deg,#2A2370 0%,#4A34A8 60%,#6B3FA8 100%);
+    --hero-shadow:0 16px 32px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E0D1B; --card:#181730; --ink:#EDEBFF; --muted:#9A98BC; --line:#2B2A4A;
+  --brand:#9A8CFF; --brand-soft:#26224D; --on-brand:#14102E;
+  --ok:#4ADBA6; --ok-soft:#10352B; --warn:#FFC25E; --warn-soft:#3B2C10; --bad:#FF8279; --bad-soft:#40201F;
+  --hero:linear-gradient(150deg,#2A2370 0%,#4A34A8 60%,#6B3FA8 100%);
+  --hero-shadow:0 16px 32px -14px rgba(0,0,0,.7);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.45}
+.wrap{max-width:560px;margin:0 auto;padding:12px 14px 110px}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer;transition:transform .12s ease,background-color .15s ease,border-color .15s ease}
+button:active{transform:scale(.96)}
+
+.top{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.top h1{font-size:20px;font-weight:700;margin:0;flex:1;letter-spacing:-.01em}
+.ibtn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px 12px;font-weight:600}
+.ibtn.primary{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.ibtn.danger{color:var(--bad);border-color:var(--bad-soft);background:var(--bad-soft)}
+
+.nav{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.nav .lb{flex:1;text-align:center;font-weight:600}
+.nav .lb small{display:block;font-weight:500;color:var(--muted);font-size:12px}
+.nav .ibtn{padding:8px 14px}
+.strip{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);justify-content:center;margin-bottom:4px}
+.strip b{color:var(--ink);font-weight:600}
+
+.day{margin-top:16px}
+.dh{display:flex;align-items:center;gap:8px;padding:0 2px}
+.dh b{font-size:15px}
+.dh span.d{color:var(--muted);font-size:13px}
+.tag{font-size:11.5px;padding:2px 8px;border-radius:20px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.day.today .dh b{color:var(--brand)}
+.none{color:var(--muted);font-size:13px;padding:6px 2px 0}
+
+.ses{display:flex;gap:10px;align-items:center;background:linear-gradient(90deg,var(--ct),var(--card) 60%);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:16px;padding:11px 11px 11px 12px;margin-top:8px;cursor:pointer;box-shadow:0 1px 2px rgba(27,25,56,.05)}
+.ses .mid{flex:1;min-width:0}
+.ses .cn{font-weight:700;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ses .tm{font-size:13.5px;color:var(--muted)}
+.ses .nt{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.ses.off{opacity:.55}
+.ses.off .cn span.nm{text-decoration:line-through}
+.chip{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px}
+.chip.done{background:var(--ok-soft);color:var(--ok)}
+.chip.off{background:var(--line);color:var(--muted)}
+.tick{flex:none;width:38px;height:38px;border-radius:50%;border:2.5px solid var(--c);background:none;display:grid;place-items:center;color:transparent;font-size:18px;font-weight:700}
+.tick.on{background:var(--c);color:#fff}
+.tick.pop{animation:pop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.paybtn{border:0;border-radius:20px;font-size:12px;font-weight:600;padding:4px 10px;margin-top:6px}
+.paybtn.on{background:var(--ok-soft);color:var(--ok)}
+.paybtn.off{background:var(--warn-soft);color:var(--warn)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:10px;box-shadow:0 1px 2px rgba(27,25,56,.05)}
+.crow{display:flex;gap:12px;align-items:center;cursor:pointer}
+.dotc{flex:none;width:14px;height:44px;border-radius:7px}
+.crow .mid{flex:1;min-width:0}
+.crow .nm{font-weight:700}
+.crow .sb{font-size:13px;color:var(--muted)}
+.crow .pr{font-weight:700;text-align:right;white-space:nowrap}
+.empty{text-align:center;padding:26px 14px;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+
+.sum{--paid:#7CF2C0;--unpaid:#FFC95E;
+  background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.2),transparent 55%),var(--hero);
+  color:#fff;border-radius:22px;padding:18px;box-shadow:var(--hero-shadow)}
+.sum .lbl{color:rgba(255,255,255,.78);font-size:13px}
+.big{font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:2px 0}
+.flow{display:flex;height:14px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.2);margin:14px 0 8px}
+.flow i{display:block;height:100%}
+.flow.grow i{animation:grow .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes grow{from{width:0}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:rgba(255,255,255,.8)}
+.legend b{color:#fff;font-weight:600}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.mini{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:10px 12px}
+.mini .v{font-weight:700;font-size:16px;color:#fff}
+.mini .lbl{font-size:12px}
+.note{margin-top:12px;border-radius:12px;padding:10px 12px;font-size:13.5px;background:rgba(255,255,255,.14);color:#fff;border-left:4px solid #FFC95E}
+.stat{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.mute{background:var(--line);color:var(--muted)}
+.link{background:none;border:0;color:var(--brand);font-weight:600;padding:8px 0 0}
+
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;gap:4px;background:var(--card);border-top:1px solid var(--line);padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));z-index:20}
+.tb{flex:1;max-width:200px;margin:0 auto;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11.5px;color:var(--muted);padding:6px 0;border-radius:12px;font-weight:600}
+.tb span{font-size:20px;line-height:1.1}
+.tb.on{color:var(--brand);background:var(--brand-soft)}
+
+.ov{position:fixed;inset:0;background:rgba(14,10,40,.55);display:flex;align-items:flex-end;justify-content:center;z-index:50;animation:fade .2s ease}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:92%;overflow:auto;animation:up .3s cubic-bezier(.2,.9,.3,1)}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h2{margin:0 0 12px;font-size:17px}
+.fld{margin-bottom:12px}
+.fld label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.fld input[type=text],.fld input[type=date],.fld input[type=time],.fld textarea,.fld select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px;min-height:46px}
+.fld input:focus,.fld textarea:focus,.fld select:focus{outline:2px solid var(--brand);border-color:transparent}
+.fld textarea{min-height:110px;font-family:inherit}
+.fld textarea.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px;min-height:140px}
+.fld .hint{font-size:12px;color:var(--muted);margin-top:4px}
+.fld.cb{display:flex;gap:10px;align-items:flex-start}
+.fld.cb label{margin:0;color:var(--ink);font-size:14.5px}
+.fld.cb input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--brand)}
+.btns{display:flex;gap:8px;margin-top:6px}
+.btns button{flex:1;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--bg);font-weight:600}
+.btns .save{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.btns .del{color:var(--bad);flex:0 0 auto}
+.sw{display:flex;gap:10px;flex-wrap:wrap}
+.sw button{width:38px;height:38px;border-radius:50%;border:3px solid transparent;padding:0}
+.sw button.sel{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--card)}
+.days{display:flex;gap:6px}
+.dchip{flex:1;padding:10px 0;border-radius:12px;border:1px solid var(--line);background:var(--bg);font-weight:600;font-size:13px}
+.dchip.on{background:var(--brand);border-color:var(--brand);color:var(--on-brand)}
+.trow{display:flex;align-items:center;gap:8px;margin-top:10px}
+.trow .dn{width:76px;font-size:13.5px;font-weight:600;flex:none}
+.trow input{flex:1;min-width:0;padding:9px 8px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:14px;z-index:60;animation:up .25s ease}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+(function(){
+'use strict';
+var KEY = 'giasu_v1';
+var PALETTE = ['#E5484D','#F76B15','#E0A100','#30A46C','#12A594','#3E63DD','#8E4EC6','#D6409F'];
+var DOWN = {1:'T2',2:'T3',3:'T4',4:'T5',5:'T6',6:'T7',0:'CN'};
+var DOWF = {1:'Thứ hai',2:'Thứ ba',3:'Thứ tư',4:'Thứ năm',5:'Thứ sáu',6:'Thứ bảy',0:'Chủ nhật'};
+var ORDER = [1,2,3,4,5,6,0];
+var DEF_START = '19:00', DEF_END = '20:30';
+
+/* ---------- storage ---------- */
+var S = load();
+function load(){
+  try { var r = localStorage.getItem(KEY); if (r) { var d = JSON.parse(r); if (d && Array.isArray(d.classes) && d.sessions) return d; } } catch(e){}
+  return { classes: [], sessions: {} };
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+var SEED_JSON = "{\"classes\":[{\"id\":\"6062ci05ea\",\"name\":\"Toán -Lý - 11 Đức Anh\",\"price\":250000,\"color\":\"#E5484D\",\"from\":\"2026-10-06\",\"slots\":{\"1\":{\"start\":\"15:00\",\"end\":\"17:00\"},\"3\":{\"start\":\"15:00\",\"end\":\"17:00\"},\"5\":{\"start\":\"15:00\",\"end\":\"17:00\"}}},{\"id\":\"7dhdify7n2\",\"name\":\"Lý 11 Tú, Hà Anh\",\"price\":300000,\"color\":\"#D6409F\",\"from\":\"2026-10-06\",\"slots\":{\"0\":{\"start\":\"14:30\",\"end\":\"16:30\"},\"6\":{\"start\":\"14:30\",\"end\":\"16:30\"}}},{\"id\":\"rv9fn7pr45\",\"name\":\"Lý 11 Hiếu\",\"price\":200000,\"color\":\"#E0A100\",\"from\":\"2026-10-06\",\"slots\":{\"1\":{\"start\":\"18:00\",\"end\":\"20:00\"},\"5\":{\"start\":\"19:30\",\"end\":\"21:30\"}}},{\"id\":\"tftncdvocq\",\"name\":\"Lý 12 Hoàng\",\"price\":250000,\"color\":\"#30A46C\",\"from\":\"2026-10-06\",\"slots\":{\"0\":{\"start\":\"16:45\",\"end\":\"18:45\"},\"6\":{\"start\":\"16:45\",\"end\":\"18:45\"}}},{\"id\":\"si8ly1kp9i\",\"name\":\"Lý 12 Long\",\"price\":250000,\"color\":\"#3E63DD\",\"from\":\"2026-10-06\",\"slots\":{\"0\":{\"start\":\"08:00\",\"end\":\"10:00\"},\"6\":{\"start\":\"08:00\",\"end\":\"10:00\"}}}],\"sessions\":{\"6062ci05ea|2026-10-07\":{\"status\":\"planned\",\"start\":\"15:00\",\"end\":\"17:00\",\"paid\":false},\"6062ci05ea|2026-10-26\":{\"status\":\"planned\",\"start\":\"15:00\",\"end\":\"17:00\",\"paid\":false},\"rv9fn7pr45|2026-10-26\":{\"status\":\"planned\",\"start\":\"18:00\",\"end\":\"20:00\",\"paid\":false},\"6062ci05ea|2026-10-28\":{\"status\":\"planned\",\"start\":\"15:00\",\"end\":\"17:00\",\"paid\":false},\"6062ci05ea|2026-10-30\":{\"status\":\"planned\",\"start\":\"15:00\",\"end\":\"17:00\",\"paid\":false},\"x|fjnscjrofk\":{\"extra\":true,\"classId\":\"6062ci05ea\",\"date\":\"2026-10-05\",\"start\":\"15:00\",\"end\":\"17:00\",\"status\":\"done\",\"paid\":false,\"price\":250000},\"6062ci05ea|2026-10-09\":{\"status\":\"planned\",\"start\":\"15:00\",\"end\":\"17:00\",\"paid\":false},\"rv9fn7pr45|2026-10-09\":{\"status\":\"planned\",\"start\":\"19:30\",\"end\":\"21:30\",\"paid\":false},\"si8ly1kp9i|2026-10-10\":{\"status\":\"planned\",\"start\":\"08:00\",\"end\":\"10:00\",\"paid\":false},\"7dhdify7n2|2026-10-10\":{\"status\":\"planned\",\"start\":\"14:30\",\"end\":\"16:30\",\"paid\":false},\"tftncdvocq|2026-10-10\":{\"status\":\"planned\",\"start\":\"16:45\",\"end\":\"18:45\",\"paid\":false},\"si8ly1kp9i|2026-10-11\":{\"status\":\"planned\",\"start\":\"08:00\",\"end\":\"10:00\",\"paid\":false},\"7dhdify7n2|2026-10-11\":{\"status\":\"planned\",\"start\":\"14:30\",\"end\":\"16:30\",\"paid\":false},\"tftncdvocq|2026-10-11\":{\"status\":\"planned\",\"start\":\"16:45\",\"end\":\"18:45\",\"paid\":false},\"x|6bt5tok5kd\":{\"extra\":true,\"classId\":\"6062ci05ea\",\"date\":\"2026-10-02\",\"start\":\"15:00\",\"end\":\"17:00\",\"status\":\"done\",\"paid\":false,\"price\":250000},\"x|pex8iqsves\":{\"extra\":true,\"classId\":\"7dhdify7n2\",\"date\":\"2026-10-03\",\"start\":\"14:30\",\"end\":\"16:30\",\"status\":\"done\",\"paid\":false,\"price\":300000},\"x|o13gsblfs1\":{\"extra\":true,\"classId\":\"7dhdify7n2\",\"date\":\"2026-10-04\",\"start\":\"19:00\",\"end\":\"20:30\",\"status\":\"done\",\"paid\":false,\"price\":300000},\"x|siykzk0c09\":{\"extra\":true,\"classId\":\"tftncdvocq\",\"date\":\"2026-10-03\",\"start\":\"17:00\",\"end\":\"19:00\",\"status\":\"done\",\"paid\":false,\"price\":250000},\"x|g6kyqmptqc\":{\"extra\":true,\"classId\":\"tftncdvocq\",\"date\":\"2026-10-04\",\"start\":\"17:00\",\"end\":\"19:00\",\"status\":\"done\",\"paid\":false,\"price\":250000},\"x|we76fkuyrz\":{\"extra\":true,\"classId\":\"si8ly1kp9i\",\"date\":\"2026-10-03\",\"start\":\"08:00\",\"end\":\"10:00\",\"status\":\"done\",\"price\":250000},\"x|e5r93h0jms\":{\"extra\":true,\"classId\":\"si8ly1kp9i\",\"date\":\"2026-10-04\",\"start\":\"08:00\",\"end\":\"10:00\",\"status\":\"done\",\"price\":250000},\"x|1r9edha838\":{\"extra\":true,\"classId\":\"rv9fn7pr45\",\"date\":\"2026-10-02\",\"start\":\"19:00\",\"end\":\"21:00\",\"status\":\"done\",\"price\":200000}}}";
+(function(){
+  if (!S.seeded) {
+    if (!S.classes.length) { try { S = JSON.parse(SEED_JSON); } catch(e){} }
+    S.seeded = true; save();
+  }
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
+})();
+
+/* ---------- helpers ---------- */
+function uid(){ return Math.random().toString(36).slice(2,9) + Date.now().toString(36).slice(-3); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmt(n){ n = Math.round(n || 0); var neg = n < 0; var s = String(Math.abs(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return (neg ? '-' : '') + s + 'đ'; }
+function parseMoney(v){
+  var s = String(v || '').toLowerCase().replace(/\s+/g, '').replace(/đ|vnd|d$/g, '');
+  if (!s) return 0;
+  var m = s.match(/^([\d.,]+)(k|tr|m|nghin|ngan|trieu)?$/);
+  if (!m) return NaN;
+  if (m[2]) {
+    var num = parseFloat(m[1].replace(',', '.'));
+    if (isNaN(num)) return NaN;
+    return Math.round(num * ((m[2] === 'k' || m[2] === 'nghin' || m[2] === 'ngan') ? 1000 : 1000000));
+  }
+  return parseInt(m[1].replace(/[.,]/g, ''), 10) || 0;
+}
+function pad(n){ return String(n).padStart(2, '0'); }
+function dstr(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function pdate(s){ var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function addDays(d, n){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); return x; }
+function mondayOf(d){ return addDays(d, -((d.getDay() + 6) % 7)); }
+function mins(t){ var p = String(t).split(':'); return (+p[0]) * 60 + (+p[1]); }
+function durText(a, b){
+  var m = mins(b) - mins(a); if (m <= 0) return '';
+  var h = Math.floor(m / 60), r = m % 60;
+  return h ? (h + 'g' + (r ? pad(r) : '')) : (r + 'p');
+}
+function monthLabel(k){ var p = k.split('-'); return 'Tháng ' + parseInt(p[1], 10) + '/' + p[0]; }
+function clsById(id){ for (var i = 0; i < S.classes.length; i++) if (S.classes[i].id === id) return S.classes[i]; return null; }
+function slotsText(c){
+  var out = [];
+  ORDER.forEach(function(d){ var sl = c.slots && c.slots[d]; if (sl) out.push(DOWN[d] + ' ' + sl.start + '–' + sl.end); });
+  return out.length ? out.join(' · ') : 'Chưa có lịch cố định';
+}
+
+/* ---------- sessions ---------- */
+function build(key, c, ds, sl, r){
+  var st = r.status || 'planned';
+  return { key: key, cid: c.id, date: ds, start: r.start || sl.start, end: r.end || sl.end, status: st,
+    paid: st === 'done' && !!r.paid, note: r.note || '', price: (st === 'done' && r.price != null) ? r.price : c.price, extra: !!r.extra };
+}
+function getSessions(fromD, toD){
+  var out = [], f = dstr(fromD), t = dstr(toD);
+  for (var d = new Date(fromD.getFullYear(), fromD.getMonth(), fromD.getDate()); dstr(d) <= t; d = addDays(d, 1)) {
+    var ds = dstr(d), dow = d.getDay();
+    for (var i = 0; i < S.classes.length; i++) {
+      var c = S.classes[i], sl = c.slots && c.slots[dow];
+      if (!sl) continue;
+      if (c.from && ds < c.from) continue;
+      var key = c.id + '|' + ds;
+      out.push(build(key, c, ds, sl, S.sessions[key] || {}));
+    }
+  }
+  Object.keys(S.sessions).forEach(function(k){
+    var r = S.sessions[k];
+    if (r.extra && r.date >= f && r.date <= t) {
+      var c = clsById(r.classId);
+      if (c) out.push(build(k, c, r.date, { start: r.start, end: r.end }, r));
+    }
+  });
+  out.sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : (a.start < b.start ? -1 : a.start > b.start ? 1 : 0); });
+  return out;
+}
+function sessionFor(key){
+  var r = S.sessions[key] || {};
+  if (key.indexOf('x|') === 0) {
+    var c0 = clsById(r.classId); if (!c0 || !r.extra) return null;
+    return build(key, c0, r.date, { start: r.start, end: r.end }, r);
+  }
+  var p = key.split('|'), c = clsById(p[0]); if (!c) return null;
+  var sl = c.slots && c.slots[pdate(p[1]).getDay()]; if (!sl) return null;
+  return build(key, c, p[1], sl, r);
+}
+function defaultSlot(s){
+  if (s.extra) return null;
+  var c = clsById(s.cid); return c && c.slots[pdate(s.date).getDay()];
+}
+
+/* ---------- UI state ---------- */
+var tab = 'week';
+var weekStart = mondayOf(new Date());
+var payMonth = dstr(new Date()).slice(0, 7);
+var popKey = null;
+
+/* ---------- modal ---------- */
+function openModal(o){
+  var ov = document.createElement('div'); ov.className = 'ov';
+  var h = '<div class="sheet"><h2>' + esc(o.title) + '</h2>';
+  (o.fields || []).forEach(function(f, i){
+    var id = 'f' + i;
+    if (f.type === 'checkbox') {
+      h += '<div class="fld cb"><input type="checkbox" id="' + id + '"' + (f.value ? ' checked' : '') + '><label for="' + id + '">' + esc(f.label) + '</label></div>';
+    } else if (f.type === 'select') {
+      h += '<div class="fld"><label for="' + id + '">' + esc(f.label) + '</label><select id="' + id + '">' + f.options.map(function(op){ return '<option value="' + esc(op.v) + '"' + (op.v === f.value ? ' selected' : '') + '>' + esc(op.l) + '</option>'; }).join('') + '</select></div>';
+    } else if (f.type === 'textarea') {
+      h += '<div class="fld"><label for="' + id + '">' + esc(f.label) + '</label><textarea id="' + id + '"' + (f.mono ? ' class="mono" spellcheck="false"' : '') + '>' + esc(f.value || '') + '</textarea>' + (f.hint ? '<div class="hint">' + esc(f.hint) + '</div>' : '') + '</div>';
+    } else {
+      var type = (f.type === 'time' || f.type === 'date') ? f.type : 'text';
+      h += '<div class="fld"><label for="' + id + '">' + esc(f.label) + '</label><input type="' + type + '" id="' + id + '" autocomplete="off" placeholder="' + esc(f.placeholder || '') + '" value="' + esc(f.value == null ? '' : f.value) + '">' + (f.hint ? '<div class="hint">' + esc(f.hint) + '</div>' : '') + '</div>';
+    }
+  });
+  h += '<div class="btns">';
+  if (o.onDelete) h += '<button class="del" data-m="del">' + esc(o.deleteLabel || 'Xóa') + '</button>';
+  h += '<button data-m="cancel">Đóng</button>';
+  if (o.onSave) h += '<button class="save" data-m="save">' + esc(o.saveLabel || 'Lưu') + '</button>';
+  h += '</div></div>';
+  ov.innerHTML = h;
+  document.body.appendChild(ov);
+  function close(){ if (ov.parentNode) ov.parentNode.removeChild(ov); }
+  function values(){
+    return (o.fields || []).map(function(f, i){
+      var el = ov.querySelector('#f' + i);
+      return f.type === 'checkbox' ? el.checked : el.value;
+    });
+  }
+  ov.addEventListener('click', function(e){
+    if (e.target === ov) return close();
+    var a = e.target.getAttribute && e.target.getAttribute('data-m');
+    if (a === 'cancel') close();
+    else if (a === 'save') { var r = o.onSave(values()); if (r !== false) close(); }
+    else if (a === 'del') { ask(o.deleteMsg || 'Xóa mục này?', function(){ o.onDelete(); close(); }); }
+  });
+  return ov;
+}
+function ask(msg, yes){ openModal({ title: msg, saveLabel: 'Đồng ý', fields: [], onSave: function(){ yes(); } }); }
+function toast(msg){
+  var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); setTimeout(function(){ if (t.parentNode) t.parentNode.removeChild(t); }, 2200);
+}
+
+/* ---------- render ---------- */
+function sesCard(s){
+  var c = clsById(s.cid); if (!c) return '';
+  var dur = durText(s.start, s.end);
+  var h = '<div class="ses ' + s.status + '" style="--c:' + c.color + ';--ct:' + c.color + '22" data-act="open-ses" data-k="' + esc(s.key) + '">';
+  h += '<div class="mid"><div class="cn"><span class="nm">' + esc(c.name) + '</span>';
+  if (s.status === 'done') h += '<span class="chip done">Đã dạy</span>';
+  if (s.status === 'off') h += '<span class="chip off">Nghỉ</span>';
+  if (s.extra) h += '<span class="chip off">Dạy bù</span>';
+  h += '</div><div class="tm num">' + esc(s.start) + ' – ' + esc(s.end) + (dur ? ' · ' + dur : '') + ' · ' + fmt(s.price) + '</div>';
+  if (s.note) h += '<div class="nt">📝 ' + esc(s.note) + '</div>';
+  h += '</div>';
+  if (s.status !== 'off') h += '<button class="tick' + (s.status === 'done' ? ' on' : '') + (s.key === popKey ? ' pop' : '') + '" data-act="tick" data-k="' + esc(s.key) + '" aria-label="Đã dạy">✓</button>';
+  h += '</div>';
+  return h;
+}
+
+function renderWeek(){
+  var end = addDays(weekStart, 6), ses = getSessions(weekStart, end), today = dstr(new Date());
+  var plan = 0, done = 0, earn = 0;
+  ses.forEach(function(s){ if (s.status !== 'off') plan++; if (s.status === 'done') { done++; earn += s.price; } });
+  var thisWeek = dstr(weekStart) === dstr(mondayOf(new Date()));
+  var h = '<div class="top"><h1>Lịch dạy</h1><button class="ibtn primary" data-act="add-extra">+ Ca</button></div>';
+  h += '<div class="nav"><button class="ibtn" data-act="wk-prev" aria-label="Tuần trước">◀</button><div class="lb num">' +
+    weekStart.getDate() + '/' + (weekStart.getMonth() + 1) + ' – ' + end.getDate() + '/' + (end.getMonth() + 1) + '/' + end.getFullYear() +
+    '<small>' + (thisWeek ? 'Tuần này' : '<a href="#" data-act="wk-today" style="color:var(--brand);text-decoration:none;font-weight:600">Về tuần này</a>') + '</small></div>' +
+    '<button class="ibtn" data-act="wk-next" aria-label="Tuần sau">▶</button></div>';
+  if (!S.classes.length) {
+    return h + '<div class="card empty"><b>Chưa có lớp nào</b>Thêm lớp đầu tiên với tiền mỗi buổi và lịch cố định hàng tuần.<br><br><button class="ibtn primary" data-act="add-class">+ Thêm lớp</button></div>';
+  }
+  h += '<div class="strip num"><span>Ca trong tuần <b>' + plan + '</b></span><span>Đã dạy <b>' + done + '</b></span><span>Lương tuần <b>' + fmt(earn) + '</b></span></div>';
+  for (var i = 0; i < 7; i++) {
+    var d = addDays(weekStart, i), ds = dstr(d), list = ses.filter(function(s){ return s.date === ds; });
+    h += '<div class="day' + (ds === today ? ' today' : '') + '"><div class="dh"><b>' + DOWF[d.getDay()] + '</b><span class="d num">' + d.getDate() + '/' + (d.getMonth() + 1) + '</span>' + (ds === today ? '<span class="tag">Hôm nay</span>' : '') + '</div>';
+    h += list.length ? list.map(sesCard).join('') : '<div class="none">Không có ca</div>';
+    h += '</div>';
+  }
+  return h;
+}
+
+function renderClasses(){
+  var h = '<div class="top"><h1>Lớp học</h1><button class="ibtn primary" data-act="add-class">+ Lớp</button></div>';
+  if (!S.classes.length) h += '<div class="card empty"><b>Chưa có lớp nào</b>Bấm "+ Lớp" để thêm.</div>';
+  S.classes.forEach(function(c){
+    h += '<div class="card"><div class="crow" data-act="edit-class" data-c="' + c.id + '"><div class="dotc" style="background:' + c.color + '"></div>' +
+      '<div class="mid"><div class="nm">' + esc(c.name) + '</div><div class="sb num">' + esc(slotsText(c)) + '</div></div>' +
+      '<div class="pr num">' + fmt(c.price) + '<div class="sb" style="font-weight:500">/ buổi</div></div></div></div>';
+  });
+  h += '<div style="display:flex;gap:8px;margin-top:20px"><button class="ibtn" style="flex:1" data-act="backup">Sao lưu / khôi phục</button><button class="ibtn" data-act="theme">Giao diện</button></div>';
+  return h;
+}
+
+function monthStats(){
+  var p = payMonth.split('-'), y = +p[0], m = +p[1];
+  var from = new Date(y, m - 1, 1), to = new Date(y, m, 0);
+  var ses = getSessions(from, to);
+  var now = new Date(), today = dstr(now), nowT = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  var per = {}, T = { earned: 0, collected: 0, projected: 0, done: 0, planned: 0, overdue: 0 };
+  ses.forEach(function(s){
+    var c = per[s.cid] || (per[s.cid] = { done: 0, planned: 0, off: 0, earned: 0, collected: 0, projected: 0 });
+    if (s.status === 'done') { c.done++; c.earned += s.price; c.projected += s.price; if (s.paid) c.collected += s.price; }
+    else if (s.status === 'planned') {
+      c.planned++; c.projected += s.price;
+      if (s.date < today || (s.date === today && s.end <= nowT)) T.overdue++;
+    } else c.off++;
+  });
+  Object.keys(per).forEach(function(k){
+    var c = per[k]; T.earned += c.earned; T.collected += c.collected; T.projected += c.projected; T.done += c.done; T.planned += c.planned + c.done;
+  });
+  return { per: per, T: T, ses: ses };
+}
+
+function renderPay(anim){
+  var st = monthStats(), T = st.T, h = '';
+  h += '<div class="top"><h1>Lương</h1></div>';
+  h += '<div class="nav"><button class="ibtn" data-act="mo-prev" aria-label="Tháng trước">◀</button><div class="lb">' + monthLabel(payMonth) + '</div><button class="ibtn" data-act="mo-next" aria-label="Tháng sau">▶</button></div>';
+  if (!S.classes.length) return h + '<div class="card empty"><b>Chưa có lớp nào</b>Thêm lớp để tính lương.<br><br><button class="ibtn primary" data-act="add-class">+ Thêm lớp</button></div>';
+  var rest = Math.max(0, T.projected - T.earned), base = T.projected || 1;
+  h += '<div class="sum" style="margin-top:8px"><div class="lbl">Lương đã dạy trong tháng</div><div class="big num" id="bigNum">' + fmt(T.earned) + '</div>';
+  h += '<div class="flow' + (anim ? ' grow' : '') + '"><i style="width:' + (T.earned / base * 100) + '%;background:var(--paid)"></i><i style="width:' + (rest / base * 100) + '%;background:var(--unpaid)"></i></div>';
+  h += '<div class="legend num"><span><span class="dot" style="background:var(--paid)"></span>Đã dạy <b>' + fmt(T.earned) + '</b></span><span><span class="dot" style="background:var(--unpaid)"></span>Còn dự kiến <b>' + fmt(rest) + '</b></span></div>';
+  h += '<div class="grid2"><div class="mini"><div class="lbl">Dự kiến cả tháng</div><div class="v num">' + fmt(T.projected) + '</div></div><div class="mini"><div class="lbl">Buổi đã dạy</div><div class="v num">' + T.done + ' / ' + T.planned + '</div></div></div>';
+  if (T.overdue) h += '<div class="note">Có ' + T.overdue + ' buổi đã qua giờ nhưng chưa tick, nên chưa tính vào lương. Vào tab Lịch để tick.</div>';
+  h += '</div>';
+  var any = false;
+  S.classes.forEach(function(c){
+    var x = st.per[c.id]; if (!x) return; any = true;
+    h += '<div class="card"><div class="crow" style="cursor:default"><div class="dotc" style="background:' + c.color + '"></div><div class="mid"><div class="nm">' + esc(c.name) + '</div>' +
+      '<div class="sb num">' + x.done + ' buổi × ' + fmt(c.price) + '</div></div><div class="pr num">' + fmt(x.earned) + '</div></div>';
+    h += '<div class="stat"><span class="pill mute">' + x.planned + ' sắp dạy</span>' + (x.off ? '<span class="pill mute">' + x.off + ' nghỉ</span>' : '') +
+      (x.planned ? '<span class="pill warn num">Còn dự kiến ' + fmt(x.projected - x.earned) + '</span>' : '<span class="pill ok">Đã dạy đủ</span>') + '</div>';
+    h += '</div>';
+  });
+  if (!any) h += '<div class="card empty"><b>Tháng này chưa có buổi nào</b>Kiểm tra lịch cố định của các lớp.</div>';
+  return h;
+}
+
+function render(anim){
+  var h = tab === 'week' ? renderWeek() : tab === 'classes' ? renderClasses() : renderPay(anim);
+  h += '<nav class="tabs">' +
+    [['week', '📅', 'Lịch'], ['pay', '💰', 'Lương'], ['classes', '🎓', 'Lớp']].map(function(t){
+      return '<button class="tb' + (tab === t[0] ? ' on' : '') + '" data-act="tab" data-t="' + t[0] + '"><span>' + t[1] + '</span>' + t[2] + '</button>';
+    }).join('') + '</nav>';
+  document.getElementById('app').innerHTML = h;
+  popKey = null;
+  if (anim && tab === 'pay' && !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    countUp(document.getElementById('bigNum'), monthStats().T.earned);
+  }
+}
+function countUp(el, to){
+  if (!el) return;
+  var t0 = null;
+  function step(ts){
+    if (t0 === null) t0 = ts;
+    var k = Math.min(1, (ts - t0) / 700), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = fmt(to * e);
+    if (k < 1) requestAnimationFrame(step); else el.textContent = fmt(to);
+  }
+  requestAnimationFrame(step);
+}
+function commit(anim){ save(); render(anim); }
+
+/* ---------- class sheet ---------- */
+function openClassSheet(cid){
+  var ex = cid ? clsById(cid) : null;
+  var draft = ex ? JSON.parse(JSON.stringify(ex)) : { id: uid(), name: '', price: 0, color: PALETTE[S.classes.length % PALETTE.length], from: dstr(new Date()), slots: {} };
+  var ov = document.createElement('div'); ov.className = 'ov';
+  ov.innerHTML = '<div class="sheet"><h2>' + (ex ? 'Sửa lớp' : 'Thêm lớp') + '</h2>' +
+    '<div class="fld"><label for="cn">Tên lớp</label><input type="text" id="cn" autocomplete="off" placeholder="Ví dụ: Lý 11 - Minh" value="' + esc(draft.name) + '"></div>' +
+    '<div class="fld"><label for="cp">Tiền mỗi buổi</label><input type="text" id="cp" autocomplete="off" placeholder="Ví dụ 200k" value="' + (draft.price || '') + '"><div class="hint">Gõ nhanh: 200k, 1.5tr, 250000</div></div>' +
+    '<div class="fld"><label>Màu của lớp</label><div class="sw" id="sw">' + PALETTE.map(function(c){ return '<button type="button" data-col="' + c + '" class="' + (c === draft.color ? 'sel' : '') + '" style="background:' + c + '" aria-label="Chọn màu"></button>'; }).join('') + '</div></div>' +
+    '<div class="fld"><label for="cf">Tính lịch từ ngày</label><input type="date" id="cf" value="' + esc(draft.from) + '"><div class="hint">Các buổi trước ngày này sẽ không xuất hiện trong lịch.</div></div>' +
+    '<div class="fld"><label>Lịch cố định mỗi tuần</label><div id="slotbox"></div></div>' +
+    '<div class="btns">' + (ex ? '<button class="del" data-m="del">Xóa lớp</button>' : '') + '<button data-m="cancel">Đóng</button><button class="save" data-m="save">Lưu</button></div></div>';
+  document.body.appendChild(ov);
+  function close(){ if (ov.parentNode) ov.parentNode.removeChild(ov); }
+  function slots(){
+    var box = ov.querySelector('#slotbox');
+    box.innerHTML = '<div class="days">' + ORDER.map(function(d){ return '<button type="button" class="dchip' + (draft.slots[d] ? ' on' : '') + '" data-d="' + d + '">' + DOWN[d] + '</button>'; }).join('') + '</div>' +
+      ORDER.filter(function(d){ return draft.slots[d]; }).map(function(d){
+        return '<div class="trow"><span class="dn">' + DOWF[d] + '</span><input type="time" data-d="' + d + '" data-w="start" value="' + draft.slots[d].start + '"><span>–</span><input type="time" data-d="' + d + '" data-w="end" value="' + draft.slots[d].end + '"></div>';
+      }).join('');
+  }
+  slots();
+  ov.addEventListener('change', function(e){
+    var d = e.target.getAttribute('data-d'), w = e.target.getAttribute('data-w');
+    if (d !== null && w && draft.slots[d]) draft.slots[d][w] = e.target.value;
+  });
+  ov.addEventListener('click', function(e){
+    if (e.target === ov) return close();
+    var t = e.target;
+    var col = t.getAttribute('data-col');
+    if (col) { draft.color = col; Array.prototype.forEach.call(ov.querySelectorAll('#sw button'), function(b){ b.classList.toggle('sel', b.getAttribute('data-col') === col); }); return; }
+    var dd = t.getAttribute('data-d');
+    if (dd !== null && t.classList.contains('dchip')) {
+      if (draft.slots[dd]) delete draft.slots[dd];
+      else {
+        var last = null; ORDER.forEach(function(x){ if (draft.slots[x]) last = draft.slots[x]; });
+        draft.slots[dd] = { start: last ? last.start : DEF_START, end: last ? last.end : DEF_END };
+      }
+      slots(); return;
+    }
+    var a = t.getAttribute('data-m');
+    if (a === 'cancel') close();
+    else if (a === 'del') {
+      ask('Xóa lớp "' + draft.name + '" và toàn bộ lịch sử các buổi dạy của lớp?', function(){
+        S.classes = S.classes.filter(function(c){ return c.id !== draft.id; });
+        Object.keys(S.sessions).forEach(function(k){ var r = S.sessions[k]; if (k.indexOf(draft.id + '|') === 0 || r.classId === draft.id) delete S.sessions[k]; });
+        commit(); close();
+      });
+    } else if (a === 'save') {
+      var name = ov.querySelector('#cn').value.trim();
+      if (!name) return toast('Nhập tên lớp');
+      var price = parseMoney(ov.querySelector('#cp').value);
+      if (isNaN(price) || price < 0) return toast('Tiền mỗi buổi chưa hợp lệ. Ví dụ: 200k');
+      var from = ov.querySelector('#cf').value;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(from)) return toast('Chọn ngày bắt đầu');
+      var bad = Object.keys(draft.slots).some(function(d){ var s = draft.slots[d]; return !s.start || !s.end || mins(s.end) <= mins(s.start); });
+      if (bad) return toast('Giờ kết thúc phải sau giờ bắt đầu');
+      draft.name = name; draft.price = price; draft.from = from;
+      var i = S.classes.map(function(c){ return c.id; }).indexOf(draft.id);
+      if (i >= 0) S.classes[i] = draft; else S.classes.push(draft);
+      commit(); close();
+    }
+  });
+  if (!ex) setTimeout(function(){ var n = ov.querySelector('#cn'); if (n) n.focus(); }, 50);
+}
+
+/* ---------- actions ---------- */
+function openSession(key){
+  var s = sessionFor(key); if (!s) return;
+  var c = clsById(s.cid);
+  var d = pdate(s.date);
+  openModal({
+    title: c.name + ' · ' + DOWF[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1),
+    fields: [
+      { label: 'Trạng thái', type: 'select', value: s.status, options: [{ v: 'planned', l: 'Sắp dạy' }, { v: 'done', l: 'Đã dạy' }, { v: 'off', l: 'Nghỉ buổi này' }] },
+      { label: 'Giờ bắt đầu', type: 'time', value: s.start },
+      { label: 'Giờ kết thúc', type: 'time', value: s.end },
+      { label: 'Nội dung buổi dạy / ghi chú', type: 'textarea', value: s.note }],
+    onSave: function(v){
+      if (!v[1] || !v[2] || mins(v[2]) <= mins(v[1])) { toast('Giờ kết thúc phải sau giờ bắt đầu'); return false; }
+      var r = S.sessions[key] = S.sessions[key] || {};
+      var def = defaultSlot(s);
+      r.status = v[0];
+      if (v[0] === 'done') { if (s.status !== 'done' || r.price == null) r.price = c.price; } else delete r.price;
+      if (v[0] === 'done' || s.extra || !def || v[1] !== def.start || v[2] !== def.end) { r.start = v[1]; r.end = v[2]; }
+      else { delete r.start; delete r.end; }
+      r.note = v[3].trim();
+      commit();
+    },
+    onDelete: s.extra ? function(){ delete S.sessions[key]; commit(); } : null,
+    deleteLabel: 'Xóa ca',
+    deleteMsg: 'Xóa ca dạy bù này?'
+  });
+}
+
+var actions = {
+  'tab': function(d){ tab = d.t; commit(tab === 'pay'); window.scrollTo(0, 0); },
+  'wk-prev': function(){ weekStart = addDays(weekStart, -7); commit(); },
+  'wk-next': function(){ weekStart = addDays(weekStart, 7); commit(); },
+  'wk-today': function(){ weekStart = mondayOf(new Date()); commit(); },
+  'mo-prev': function(){ var p = payMonth.split('-'); var d = new Date(+p[0], +p[1] - 2, 1); payMonth = dstr(d).slice(0, 7); commit(true); },
+  'mo-next': function(){ var p = payMonth.split('-'); var d = new Date(+p[0], +p[1], 1); payMonth = dstr(d).slice(0, 7); commit(true); },
+  'tick': function(d){
+    var s = sessionFor(d.k); if (!s) return;
+    var r = S.sessions[d.k] = S.sessions[d.k] || {};
+    if (s.status === 'done') { r.status = 'planned'; delete r.price; r.paid = false; }
+    else { r.status = 'done'; r.price = clsById(s.cid).price; r.start = s.start; r.end = s.end; popKey = d.k; }
+    commit();
+  },
+  'open-ses': function(d){ openSession(d.k); },
+  'add-extra': function(){
+    if (!S.classes.length) return toast('Hãy thêm lớp trước');
+    openModal({ title: 'Thêm ca dạy bù / đột xuất', saveLabel: 'Thêm ca', fields: [
+      { label: 'Lớp', type: 'select', value: S.classes[0].id, options: S.classes.map(function(c){ return { v: c.id, l: c.name }; }) },
+      { label: 'Ngày', type: 'date', value: dstr(new Date()) },
+      { label: 'Giờ bắt đầu', type: 'time', value: DEF_START },
+      { label: 'Giờ kết thúc', type: 'time', value: DEF_END }],
+      onSave: function(v){
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(v[1])) { toast('Chọn ngày'); return false; }
+        if (!v[2] || !v[3] || mins(v[3]) <= mins(v[2])) { toast('Giờ kết thúc phải sau giờ bắt đầu'); return false; }
+        S.sessions['x|' + uid()] = { extra: true, classId: v[0], date: v[1], start: v[2], end: v[3], status: 'planned' };
+        weekStart = mondayOf(pdate(v[1]));
+        tab = 'week'; commit(); toast('Đã thêm ca');
+      } });
+  },
+  'add-class': function(){ openClassSheet(null); },
+  'edit-class': function(d){ openClassSheet(d.c); },
+  'backup': function(){
+    openModal({ title: 'Sao lưu / khôi phục', saveLabel: 'Khôi phục (thay dữ liệu hiện tại)', fields: [
+      { label: 'Dữ liệu của bạn', type: 'textarea', mono: true, value: JSON.stringify(S), hint: 'Sao lưu: chọn hết, sao chép rồi dán vào Ghi chú. Khôi phục: dán dữ liệu cũ vào đây rồi bấm nút bên dưới.' }],
+      onSave: function(v){
+        try {
+          var d = JSON.parse(v[0]);
+          if (!d || !Array.isArray(d.classes) || !d.sessions || typeof d.sessions !== 'object') throw 0;
+          S = d; commit(); toast('Đã khôi phục');
+        } catch(e){ toast('Dữ liệu không hợp lệ'); return false; }
+      } });
+  },
+  'theme': function(){
+    var r = document.documentElement, cur = r.getAttribute('data-theme');
+    var dark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    r.setAttribute('data-theme', dark ? 'light' : 'dark');
+  }
+};
+document.getElementById('app').addEventListener('click', function(e){
+  var el = e.target.closest('[data-act]'); if (!el) return;
+  var act = el.getAttribute('data-act');
+  if (act === 'wk-today') e.preventDefault();
+  var d = { k: el.getAttribute('data-k'), c: el.getAttribute('data-c'), t: el.getAttribute('data-t') };
+  if (actions[act]) actions[act](d);
+});
+
+render(false);
+})();
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+
+</script>
+</body>
+</html>
