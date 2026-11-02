@@ -446,71 +446,68 @@ body.scrolled .top { border-bottom-color: var(--line); }
 .chip.done { background: var(--ok-soft); color: var(--ok); }
 .chip.off { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--muted); }
 
-/* Nút chip chuyển đổi ĐÃ TRẢ / CHƯA TRẢ trực tiếp */
-.pay-toggle-chip {
-  border: none;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 9px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s ease;
-}
-.pay-toggle-chip.paid {
-  background: var(--ok-soft);
-  color: var(--ok);
-  border: 1px solid rgba(74, 222, 128, 0.3);
-}
-.pay-toggle-chip.unpaid {
-  background: var(--warn-soft);
-  color: var(--warn);
-  border: 1px solid rgba(253, 224, 71, 0.35);
-}
-.pay-toggle-chip:hover {
-  transform: scale(1.06);
-  filter: brightness(1.1);
-}
-
-/* ==================== DẤU MỘC ĐIỂM DANH (TEACHER STAMP) ==================== */
+/* ==================== NÚT DUY NHẤT: TICK LẦN 1 -> CHƯA TRẢ, TICK LẦN 2 -> ĐÃ TRẢ ==================== */
 .tick {
   position: relative;
   flex: none;
-  width: 44px;
-  height: 44px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.22s var(--spring);
+  white-space: nowrap;
+}
+/* Trạng thái 0: Chưa dạy - Nút tròn 40px viền đứt nét phấn */
+.tick:not(.unpaid):not(.paid) {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 2px dashed var(--c);
   background: var(--glass);
-  display: grid;
-  place-items: center;
-  color: transparent;
-  font-size: 18px;
-  font-weight: 900;
-  transition: all 0.25s var(--spring);
+  color: var(--c);
+  font-size: 16px;
 }
-.tick.on {
+.tick:not(.unpaid):not(.paid):hover {
   border-style: solid;
-  border-width: 2.5px;
-  border-color: var(--c);
-  background: var(--c);
-  color: #FFF;
-  box-shadow: 0 0 16px -2px var(--c);
-  transform: rotate(-8deg) scale(1.05);
+  transform: scale(1.08);
 }
-.tick.on::after {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.6);
-  pointer-events: none;
+/* Trạng thái 1: Tick lần 1 -> CHƯA TRẢ (Pill vàng dạ quang) */
+.tick.unpaid {
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 14px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  border: 1.5px solid var(--warn);
+  font-size: 12.5px;
+  box-shadow: 0 4px 14px -4px rgba(253, 224, 71, 0.4);
 }
-@media (hover:hover) {
-  .tick:hover { scale: 1.1; box-shadow: 0 8px 18px -6px var(--c); }
+.tick.unpaid:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
+/* Trạng thái 2: Tick lần 2 -> ĐÃ TRẢ (Pill xanh lá đã thanh toán) */
+.tick.paid {
+  height: 38px;
+  padding: 0 13px;
+  border-radius: 14px;
+  background: var(--ok-soft);
+  color: var(--ok);
+  border: 1.5px solid var(--ok);
+  font-size: 12.5px;
+  box-shadow: 0 4px 14px -4px rgba(74, 222, 128, 0.4);
+}
+.tick.paid:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+.tick.pop { animation: pop .4s var(--spring); }
+.tick.pop::after { content: ""; position: absolute; inset: -4px; border-radius: inherit; border: 2px solid currentColor; animation: burst .55s ease-out forwards; }
+@keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes burst { to { transform: scale(1.6); opacity: 0; } }
 
 /* ==================== CARDS & BENTO ==================== */
 .card {
@@ -567,23 +564,7 @@ button.crow { cursor: pointer; }
   color: var(--warn);
   border: 1px solid rgba(253, 224, 71, 0.3);
 }
-.btn-pay-all {
-  margin-left: auto;
-  border: 1px solid rgba(74, 222, 128, 0.35);
-  background: rgba(74, 222, 128, 0.12);
-  color: var(--ok);
-  font-size: 11.5px;
-  font-weight: 800;
-  padding: 5px 11px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.btn-pay-all:hover {
-  background: var(--ok);
-  color: #000;
-  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
-}
+
 
 .sum {
   --paid: #4ADE80;
@@ -1152,12 +1133,6 @@ function sesCard(s){
   var h = '<div class="ses ' + s.status + '" style="--c:' + c.color + '" role="button" tabindex="0" data-act="open-ses" data-k="' + esc(s.key) + '">';
   h += '<div class="mid"><div class="cn"><span class="nm">' + esc(c.name) + '</span>';
   
-  if (s.status === 'done') {
-    h += '<span class="chip done">Đã dạy</span>';
-    // Interactive Paid / Unpaid toggle badge
-    h += '<button class="pay-toggle-chip ' + (s.paid ? 'paid' : 'unpaid') + '" data-act="toggle-paid" data-k="' + esc(s.key) + '" title="Chạm để chuyển Đã trả / Chưa trả">' +
-      (s.paid ? '✓ Đã trả' : '⏳ Chưa trả') + '</button>';
-  }
   if (s.status === 'off') h += '<span class="chip off">Nghỉ</span>';
   if (s.extra) h += '<span class="chip off">Dạy bù</span>';
   
@@ -1165,9 +1140,17 @@ function sesCard(s){
   if (s.note) h += '<div class="nt">📝 ' + esc(s.note) + '</div>';
   h += '</div>';
   
-  // Dấu mộc điểm danh giáo viên
+  // NÚT DUY NHẤT: Bấm lần 1 -> Chưa trả, Bấm lần 2 -> Đã trả, Bấm lần 3 -> Sắp dạy
   if (s.status !== 'off') {
-    h += '<button class="tick' + (s.status === 'done' ? ' on' : '') + (s.key === popKey ? ' pop' : '') + '" data-act="tick" data-k="' + esc(s.key) + '" aria-pressed="' + (s.status === 'done') + '" aria-label="Điểm danh dạy xong">✓</button>';
+    if (s.status === 'done') {
+      if (s.paid) {
+        h += '<button class="tick paid' + (s.key === popKey ? ' pop' : '') + '" data-act="tick" data-k="' + esc(s.key) + '" aria-label="Đã trả tiền">✓ Đã trả</button>';
+      } else {
+        h += '<button class="tick unpaid' + (s.key === popKey ? ' pop' : '') + '" data-act="tick" data-k="' + esc(s.key) + '" aria-label="Chưa trả tiền">⏳ Chưa trả</button>';
+      }
+    } else {
+      h += '<button class="tick' + (s.key === popKey ? ' pop' : '') + '" data-act="tick" data-k="' + esc(s.key) + '" aria-label="Điểm danh ca dạy">✓</button>';
+    }
   }
   h += '</div>';
   return h;
@@ -1380,14 +1363,10 @@ function renderPay(){
     h += '<div class="card"><div class="crow"><div class="dotc" style="background:' + c.color + '"></div><div class="mid"><div class="nm">' + esc(c.name) + '</div>' +
       '<div class="sb num">' + x.done + ' buổi đã dạy × ' + fmt(c.price) + '</div></div><div class="pr num">' + fmt(x.earned) + '</div></div>';
     
-    // PHẦN THÊM: ĐÃ TRẢ RỒI VÀ CHƯA TRẢ CHO MỖI LỚP QUA MỖI LẦN TICK
+    // PHẦN LƯƠNG: ĐÃ TRẢ RỒI VÀ CHƯA TRẢ CHO MỖI LỚP THEO NÚT TICK
     h += '<div class="pay-breakdown-row num">';
     h += '<span class="pay-badge-paid">✓ Đã trả: <b>' + fmt(x.collected) + '</b> (' + x.paidCount + ' buổi)</span>';
     h += '<span class="pay-badge-unpaid">⏳ Chưa trả: <b>' + fmt(x.unpaidAmount) + '</b> (' + x.unpaidCount + ' buổi)</span>';
-    
-    if (x.unpaidCount > 0) {
-      h += '<button class="btn-pay-all" data-act="pay-all-class" data-c="' + c.id + '" data-k="' + payMonth + '" title="Đánh dấu toàn bộ các buổi đã dạy tháng này là đã trả">✓ Đã thu hết tháng</button>';
-    }
     h += '</div>';
 
     h += '<div class="stat"><span class="pill mute">' + x.planned + ' sắp dạy</span>' + (x.off ? '<span class="pill mute">' + x.off + ' nghỉ</span>' : '') +
@@ -1620,45 +1599,44 @@ var actions = {
   'cls-cal': function(d){ calClass = d.c; calMonth = d.k || monthKey(new Date()); tab = 'classes'; go('left', true); },
   'cls-back': function(){ calClass = null; go('right', true); },
   
-  // Tick điểm danh ca dạy: Nổ pháo hoa phấn + Rung haptic
+  // NÚT DUY NHẤT: Bấm 1 lần -> Chưa trả, Bấm lần nữa -> Đã trả, Bấm lần nữa -> Quay lại Sắp dạy
   'tick': function(d, e){
     var s = sessionFor(d.k); if (!s) return;
-    var on = s.status !== 'done';
-    setDone(s, on);
-    if (on) {
+    var r = S.sessions[s.key] = S.sessions[s.key] || {};
+    var c = clsById(s.cid);
+    
+    if (s.status !== 'done') {
+      // Bấm lần 1: Đánh dấu đã dạy, trạng thái CHƯA TRẢ
+      r.status = 'done';
+      r.price = c ? c.price : (s.price || 0);
+      r.start = s.start;
+      r.end = s.end;
+      r.paid = false;
       popKey = d.k;
       if (e) {
         var rect = e.target.getBoundingClientRect();
         createStampBurst(rect.left + rect.width / 2, rect.top + rect.height / 2);
       }
-      try { if (navigator.vibrate) navigator.vibrate([20, 40, 25]); } catch(_){}
+      try { if (navigator.vibrate) navigator.vibrate([20, 35]); } catch(_){}
+      toast('⏳ Buổi dạy: CHƯA TRẢ (Bấm tiếp nếu đã thu tiền)');
+    } else if (!s.paid) {
+      // Bấm lần 2: Đánh dấu ĐÃ TRẢ
+      r.paid = true;
+      popKey = d.k;
+      if (e) {
+        var rect = e.target.getBoundingClientRect();
+        createStampBurst(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      }
+      try { if (navigator.vibrate) navigator.vibrate([25, 45, 30]); } catch(_){}
+      toast('✓ Buổi dạy: ĐÃ TRẢ TIỀN');
+    } else {
+      // Bấm lần 3: Hoàn tác về Sắp dạy
+      r.status = 'planned';
+      r.paid = false;
+      delete r.price;
+      toast('Đã hoàn tác: Sắp dạy');
     }
     commit();
-    toast(on ? '✓ Đã điểm danh ca dạy xong' : 'Đã chuyển về Sắp dạy');
-  },
-
-  // Toggle ĐÃ TRẢ / CHƯA TRẢ trực tiếp
-  'toggle-paid': function(d){
-    var s = sessionFor(d.k); if (!s || s.status !== 'done') return;
-    var r = S.sessions[s.key] = S.sessions[s.key] || {};
-    r.paid = !r.paid;
-    commit();
-    toast(r.paid ? '✓ Đã ghi nhận: ĐÃ TRẢ TIỀN' : '⏳ Đã ghi nhận: CHƯA TRẢ TIỀN');
-  },
-
-  // Thu hết toàn bộ các buổi chưa trả của lớp trong tháng
-  'pay-all-class': function(d){
-    var cid = d.c, mk = d.k;
-    var p = mk.split('-'), y = +p[0], m = +p[1];
-    var from = new Date(y, m - 1, 1), to = new Date(y, m, 0);
-    var list = getSessions(from, to).filter(function(s){ return s.cid === cid && s.status === 'done' && !s.paid; });
-    if (!list.length) return toast('Không có buổi nào chưa trả');
-    list.forEach(function(s){
-      var r = S.sessions[s.key] = S.sessions[s.key] || {};
-      r.paid = true;
-    });
-    commit();
-    toast('✓ Đã đánh dấu ' + list.length + ' buổi của lớp là ĐÃ TRẢ');
   },
 
   'open-ses': function(d){ openSession(d.k); },
