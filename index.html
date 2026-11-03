@@ -1385,6 +1385,7 @@ function renderPay(){
   h += '<div class="grid2"><div class="mini"><div class="lbl">Dự kiến cả tháng</div><div class="v num">' + fmt(T.projected) + '</div></div><div class="mini"><div class="lbl">Tiến độ buổi dạy</div><div class="v num">' + T.done + ' / ' + T.planned + ' buổi</div></div></div>';
   
   if (T.overdue) h += '<div class="note">Có ' + T.overdue + ' buổi đã qua giờ nhưng chưa đóng dấu điểm danh, nên chưa tính vào lương. Vào tab Lịch để tick.</div>';
+  h += '<button class="link" style="margin-top:10px" data-act="copy-salary" data-k="' + payMonth + '">📋 Sao chép lương gửi app Chi tiêu (' + fmt(T.collected) + ')</button>';
   h += '</div>';
 
   var any = false;
@@ -1666,6 +1667,14 @@ var actions = {
     });
     commit();
     toast(newPaid ? '✓ Đã đánh dấu: ĐÃ TRẢ' : 'Đã chuyển về: CHƯA TRẢ');
+  },
+
+  // Mã "GS|YYYY-MM|số đã thu" để dán sang app Chi tiêu (hai PWA trên iPhone không dùng chung bộ nhớ)
+  'copy-salary': function(d){
+    var code = 'GS|' + d.k + '|' + Math.round(monthStats(d.k).T.collected);
+    var ok = function(){ toast('Đã sao chép: ' + code); };
+    var fail = function(){ window.prompt('Sao chép mã này rồi dán vào app Chi tiêu:', code); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(ok, fail); else fail();
   },
 
   'open-ses': function(d){ openSession(d.k); },
